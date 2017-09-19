@@ -1,0 +1,7 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\Directory\shell\MyScript1]
+@="Create index.html"
+
+[HKEY_CLASSES_ROOT\Directory\shell\MyScript1\command]
+@="\"C:\\tmp\\video-maker.bat\" \"%1\""

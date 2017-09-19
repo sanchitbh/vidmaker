@@ -1,13 +1,13 @@
 <?php
 
-if ($dir = $argv[1] ?? 'E:\tutorials\new\[FreeTutorials.Us] git-basic-concept-fundamentals-github') {
+if ($dir = $argv[1] ?? 'E:\tutorials\new\O\'Reilly - Introduction to Docker') {
 	$options = '';
 	$files = files($dir);
 	$count = 0;
 
 	foreach ( $files as $name => $path) {
 		echo "$path\n";
-		$options .= sprintf('<option value="%s">%s (%d of %d)</option>', $path, pathinfo($name, PATHINFO_FILENAME), ++$count, count($files));
+		$options .= sprintf('<option value="%s">%s (%d of %d)</option>', $path, substr(pathinfo($name, PATHINFO_FILENAME), 0, 80), ++$count, count($files));
 	}
 
 	for ($i = 1; $i <= 6; $i += 0.1) {
@@ -190,8 +190,12 @@ function files($dir, $level = 0) {
 	foreach($files as $key => $value){
         $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
         if(!is_dir($path)) {
-			if (pathinfo($path, PATHINFO_EXTENSION) == 'mp4') {
+			if (preg_match('/mp4/i', pathinfo($path, PATHINFO_EXTENSION))) {
 				$results[val($value, $level, ++$i)] = $path;
+			} elseif (preg_match('/flv|avi/i', pathinfo($path, PATHINFO_EXTENSION))) {
+				$newPath = sprintf('%s/%s.mp4', pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_FILENAME));
+				system(sprintf('ffmpeg -y -i "%s" "%s"', $path, $newPath)); 
+				$results[val($value, $level, ++$i)] = $newPath;
 			}
         } else if($value != "." && $value != "..") {
             $results = array_merge($results, files($path, ++$level));

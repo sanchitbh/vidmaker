@@ -1,1 +1,1 @@
-php c:\tmp\video-maker-new.php %*
+php c:\tmp\vidmaker\video-maker-new.php %*

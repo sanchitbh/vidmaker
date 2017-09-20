@@ -1,13 +1,14 @@
 <?php
 
-if ($dir = $argv[1] ?? 'E:\tutorials\new\O\'Reilly - Introduction to Docker') {
+if ($dir = $argv[1] ?? 'E:\tutorials\new\modern-web-development-with-laravel') {
 	$options = '';
 	$files = files($dir);
 	$count = 0;
 
 	foreach ( $files as $name => $path) {
 		echo "$path\n";
-		$options .= sprintf('<option value="%s">%s (%d of %d)</option>', $path, substr(pathinfo($name, PATHINFO_FILENAME), 0, 80), ++$count, count($files));
+		$options .= sprintf('<option value="%s">%s (%d of %d)</option>', strtr(preg_replace("/\Q$dir\\\E/", '', $path), ['\\' => '/']), 
+						substr(pathinfo($name, PATHINFO_FILENAME), 0, 80), ++$count, count($files));
 	}
 
 	for ($i = 1; $i <= 6; $i += 0.1) {

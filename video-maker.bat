@@ -1,1 +1,1 @@
-php c:\tmp\vidmaker\video-maker-new.php %*
+php E:\Dropbox\projects\fun\vidmaker\video-maker-new.php %*

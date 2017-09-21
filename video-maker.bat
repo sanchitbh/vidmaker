@@ -1,1 +1,2 @@
-php E:\Dropbox\projects\fun\vidmaker\video-maker-new.php %*
+php D:\Dropbox\projects\fun\vidmaker\video-maker-new.php %*
+pause

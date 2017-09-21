@@ -1,6 +1,6 @@
 <?php
 
-if ($dir = $argv[1] ?? 'E:\tutorials\new\modern-web-development-with-laravel') {
+if ($dir = $argv[1] ?? 'D:\tutorials\09 Roundup') {
 	$options = '';
 	$files = files($dir);
 	$count = 0;
@@ -184,19 +184,34 @@ EOF;
 }
 
 function files($dir, $level = 0) {
+	global $fix;
+
 	$files = scandir($dir);
 	$results = [];
+	$maxHeight = 740;
 	$i = 0;
 
 	foreach($files as $key => $value){
         $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
         if(!is_dir($path)) {
-			if (preg_match('/mp4/i', pathinfo($path, PATHINFO_EXTENSION))) {
-				$results[val($value, $level, ++$i)] = $path;
-			} elseif (preg_match('/flv|avi/i', pathinfo($path, PATHINFO_EXTENSION))) {
-				$newPath = sprintf('%s/%s.mp4', pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_FILENAME));
-				system(sprintf('ffmpeg -y -i "%s" "%s"', $path, $newPath)); 
-				$results[val($value, $level, ++$i)] = $newPath;
+			$ext = pathinfo($path, PATHINFO_EXTENSION);
+			
+			if (preg_match('/avi|flv|mp4|mov/i', $ext)) {
+				$fix = ($fix || isHuge($path, $maxHeight));
+
+				if (!$fix && preg_match('/mp4/i', $ext)) {
+					$results[val($value, $level, ++$i)] = $path;
+				} else {
+					$newPath = sprintf('%s/%s-fix.mp4', pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_FILENAME));
+					$command = sprintf('HandBrakeCLI.exe --encoder x264 --quality 32.0 --audio 1 --aencoder faac --ab 48 --mixdown mono --arate auto --drc 0.0 --audio-copy-mask aac,ac3,dtshd,dts,mp3 --audio-fallback ffac3 --format mp4 --loose-anamorphic --modulus 2 --markers --x264-preset medium --h264-profile baseline --h264-level 3.0 --x264-tune fastdecode --optimize --maxWidth 1280 --maxHeight %d --crop 0:0:0:0 --ipod-atom --input "%s" --output "%s"', $maxHeight, $path, $newPath);
+
+					system($command); 
+					$results[val($value, $level, ++$i)] = $newPath;
+					
+					if (filesize($newPath) > 1024 * 1024) {
+						unlink($path);
+					}
+				}
 			}
         } else if($value != "." && $value != "..") {
             $results = array_merge($results, files($path, ++$level));
@@ -206,6 +221,16 @@ function files($dir, $level = 0) {
 	ksort($results);
 
 	return $results;
+}
+
+function isHuge($path, $maxHeight) {
+	$res = `ffmpeg -i "$path" 2>&1`;
+	
+	if (preg_match('/Stream.*, ((\d+)x(\d+))/', $res, $matches)) {
+		return $matches[3] > $maxHeight;
+	}
+
+	return false;
 }
 
 function val($name, $prefix, $i) {

@@ -188,12 +188,13 @@ function files($dir, $level = 0) {
 
 	$files = scandir($dir);
 	$results = [];
-	$maxHeight = 740;
+	$maxHeight = 1080;
 	$i = 0;
 
 	foreach($files as $key => $value){
         $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
-        if(!is_dir($path)) {
+
+        if (!is_dir($path)) {
 			$ext = pathinfo($path, PATHINFO_EXTENSION);
 			
 			if (preg_match('/avi|flv|mp4|mov/i', $ext)) {
@@ -203,7 +204,7 @@ function files($dir, $level = 0) {
 					$results[val($value, $level, ++$i)] = $path;
 				} else {
 					$newPath = sprintf('%s/%s-fix.mp4', pathinfo($path, PATHINFO_DIRNAME), pathinfo($path, PATHINFO_FILENAME));
-					$command = sprintf('HandBrakeCLI.exe --encoder x264 --quality 32.0 --audio 1 --aencoder faac --ab 48 --mixdown mono --arate auto --drc 0.0 --audio-copy-mask aac,ac3,dtshd,dts,mp3 --audio-fallback ffac3 --format mp4 --loose-anamorphic --modulus 2 --markers --x264-preset medium --h264-profile baseline --h264-level 3.0 --x264-tune fastdecode --optimize --maxWidth 1280 --maxHeight %d --crop 0:0:0:0 --ipod-atom --input "%s" --output "%s"', $maxHeight, $path, $newPath);
+					$command = sprintf('HandBrakeCLI.exe --encoder x264 --quality 32.0 --audio 1 --aencoder faac --ab 48 --mixdown mono --arate auto --drc 0.0 --audio-copy-mask aac,ac3,dtshd,dts,mp3 --audio-fallback ffac3 --format mp4 --loose-anamorphic --modulus 2 --markers --x264-preset medium --h264-profile baseline --h264-level 3.0 --x264-tune fastdecode --optimize --maxWidth 1280 --maxHeight 720 --crop 0:0:0:0 --ipod-atom --input "%s" --output "%s"', $path, $newPath);
 
 					system($command); 
 					$results[val($value, $level, ++$i)] = $newPath;

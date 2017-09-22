@@ -4,4 +4,4 @@ Windows Registry Editor Version 5.00
 @="Create index.html"
 
 [HKEY_CLASSES_ROOT\Directory\shell\MyScript1\command]
-@="\"D:\\Dropbox\\projects\\fun\\vidmaker\\video-maker.bat\" \"%1\""
+@="\"E:\\Dropbox\\projects\\fun\\vidmaker\\video-maker.bat\" \"%1\""
